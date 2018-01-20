@@ -55,4 +55,34 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   TODO:
     * update the state by using Extended Kalman Filter equations
   */
+  // Section 14 of lesson 5
+
+  float x = ekf_.x_(0);
+  float y = ekf_.x_(1);
+  float vx = ekf_.x_(2);
+  float vy = ekf_.x_(3);
+
+  float rho = sqrt(x*x+y*y);
+  float theta = atan2(y,x);
+  float ro_dot = (x*vy+y*vy)/rho;
+  VectorXd x_pred = VectorXd(3);
+  z_pred << rho, theta, ro_dot;
+
+  // In section 7 of lesson 5
+  MatrixXd Ht = H.transpose(0);
+  MatrixXd S = H * P * Ht + R;
+  MatrixXd Si = S.inverse();
+  MatrixXd K = P * Ht * Si;
+
+  //new state
+  x = x + (K * y);
+  P = (I - K + H) * P;
+
+  //KF Prediction step
+
+  x = F * x + u;
+  MatrixXd Ft = F.transpose();
+  P = F * P * Ft +Q;
+
+
 }
