@@ -57,6 +57,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   */
   // Section 14 of lesson 5
 
+  
+  KalmanFilter ekf_;
+
   float x = ekf_.x_(0);
   float y = ekf_.x_(1);
   float vx = ekf_.x_(2);
@@ -66,15 +69,37 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   float theta = atan2(y,x);
   float ro_dot = (x*vy+y*vy)/rho;
   VectorXd x_pred = VectorXd(3);
+
+  VectorXd z_pred = VectorXd(3);
   z_pred << rho, theta, ro_dot;
 
   // In section 7 of lesson 5
-  MatrixXd Ht = H.transpose(0);
+
+  MatrixXd H; // measurement matrix;
+
+  MatrixXd I;
+  MatrixXd Q;
+  MatrixXd F;
+  MatrixXd P;
+  MatrixXd R;
+  VectorXd u;
+
+  u = VectorXd(2);
+  u << 0, 0;
+
+  P = MatrixXd(2, 2);
+  P << 1000, 0, 0, 1000;
+  
+  VectorXd y = z - H * x;
+  MatrixXd Ht = H.transpose();
   MatrixXd S = H * P * Ht + R;
   MatrixXd Si = S.inverse();
   MatrixXd K = P * Ht * Si;
 
   //new state
+  x = VectorXd(2);
+  x << 0, 0;
+
   x = x + (K * y);
   P = (I - K + H) * P;
 
