@@ -31,16 +31,16 @@ FusionEKF::FusionEKF() {
         0, 0.0009, 0,
         0, 0, 0.09;
 
-  //H_laser << 1, 0, 0, 0, From section 10 in Lesson 5
+  H_laser_ << 1, 0, 0, 0, //From section 10 in Lesson 5
                0, 1, 0, 0;
 
-  ekf_.F_ = MatrixXd(4, 4)//  4x4 matrix (state transition)
+  ekf_.F_ = MatrixXd(4, 4);//  4x4 matrix (state transition)
 
-  ekf_.P_ = MatrixXd(4, 4)// 4x4 matrix
+  ekf_.P_ = MatrixXd(4, 4);// 4x4 matrix
 
-  //set teh acceleration noise components
-  noise_ax = 9 //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
-  noise_ay = 9 //provided in the quize as 9
+  //set the acceleration noise components
+  noise_ax = 9; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
+  noise_ay = 9; //provided in the quize as 9
 
   /**
   TODO:
@@ -81,18 +81,22 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       */
 
       // put in values for ro and theta
-      ekf_.x(0) = ro*cos(theta);
-      ekf_.x(1) = ro*sin(theta);
+      float ro = measurement_pack.raw_measurements_[0];
+      float theta = measurement_pack.raw_measurements_[1];
+      ekf_.x_(0) = ro*cos(theta);
+      ekf_.x_(1) = ro*sin(theta);
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       /**
       Initialize state.
       */
-      ekf_.x(0) = x;
-      ekf_.x(1) = y;
+      ekf_.x_(0) = measurement_pack.raw_measurements_[0];
+      ekf_.x_(1) = measurement_pack.raw_measurements_[1];
+      ekf_.x_(2) = 0.0;
+      ekf_.x_(3) = 0.0;
     }
 
-    ekf_.F = MatrixXd(4, 4);
+    ekf_.F_ = MatrixXd(4, 4);
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update
@@ -144,8 +148,16 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
+
+    // set ekf_.H_ by setting to Hj which is the calculated jacobian
+    //set ekf_.R _ by just using R_radar_
   } else {
     // Laser updates
+
+    //set ekf_.H_ by just using H_laser_
+    //set ekf_.R_ by just using R_laser_
+
+    //ekf_.Update(measurement_pack.raw_measurements_);
   }
 
   // print the output
