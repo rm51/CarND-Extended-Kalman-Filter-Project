@@ -72,9 +72,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   VectorXd z_pred = VectorXd(3);
   z_pred << rho, theta, ro_dot;
-
+ 
   // In section 7 of lesson 5
-
+  
   MatrixXd H; // measurement matrix;
 
   MatrixXd I;
@@ -89,25 +89,25 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   P = MatrixXd(2, 2);
   P << 1000, 0, 0, 1000;
-  
-  VectorXd y = z - H * x;
+ 
+  VectorXd y_ = z - z_pred;
   MatrixXd Ht = H.transpose();
-  MatrixXd S = H * P * Ht + R;
+  MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
   MatrixXd K = P * Ht * Si;
 
   //new state
-  x = VectorXd(2);
-  x << 0, 0;
+  //x = VectorXd(2);
+  //x << 0, 0;
 
-  x = x + (K * y);
-  P = (I - K + H) * P;
+  x_ = x_ + (K * y);
+  P_ = (I - K + H) * P_;
 
   //KF Prediction step
 
-  x = F * x + u;
+  x_ = F * x_ + u;
   MatrixXd Ft = F.transpose();
-  P = F * P * Ft +Q;
+  P_ = F_ * P_ * Ft +Q_;
 
 
 }
