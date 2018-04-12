@@ -37,10 +37,24 @@ FusionEKF::FusionEKF() {
   ekf_.F_ = MatrixXd(4, 4);//  4x4 matrix (state transition)
 
   ekf_.P_ = MatrixXd(4, 4);// 4x4 matrix
+   
+  
+  ekf_.F_ << 1, 2, 3, 4,
+             5, 6, 7, 8,
+             9, 10, 11, 12,
+             13, 14, 15, 16;
+  
+
+  ekf_.P_ << 1, 0, 0, 0,
+             0, 1, 0, 0,
+             0, 0, 1000, 0,
+             0, 0, 10, 1000;
+
+   
 
   //set the acceleration noise components
-  noise_ax = 9; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
-  noise_ay = 9; //provided in the quize as 9
+  float noise_ax = 9.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
+  float noise_ay = 9.0; //provided in the quize as 9
 
   /**
   TODO:
@@ -48,6 +62,10 @@ FusionEKF::FusionEKF() {
     * Set the process and measurement noises
   */
 
+ // moved from isInitialzed to here
+   ekf_.x_ = VectorXd(4);
+
+   ekf_.x_ << .5, .5, .5, .5; // this value is important for the RMSE
 
 }
 
@@ -69,11 +87,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       * Create the covariance matrix.
       * Remember: you'll need to convert radar from polar to cartesian coordinates.
     */
-    ekf_ = KalmanFilter();
+
     // first measurement
     cout << "EKF: " << endl;
-    ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1; // this value is important for the RMSE
+
+    
+
+    
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       /**
@@ -92,11 +112,14 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       */
       ekf_.x_(0) = measurement_pack.raw_measurements_[0];
       ekf_.x_(1) = measurement_pack.raw_measurements_[1];
-      ekf_.x_(2) = 0.0;
-      ekf_.x_(3) = 0.0;
+
+      // changed from 0. 0 
+      ekf_.x_(2) = 1.0;
+      ekf_.x_(3) = 10.0;
     }
 
-    ekf_.F_ = MatrixXd(4, 4);
+   // remove since reinitializing
+    // ekf_.F_ = MatrixXd(4, 4);
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update

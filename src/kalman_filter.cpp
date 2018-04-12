@@ -29,9 +29,15 @@ void KalmanFilter::Predict() {
   */
   
   std::cout << "before Predict" << std::endl;
+  cout << "x_" << endl << x_ << endl << endl;
+  cout << "F_" << endl << x_ << endl << endl;
+
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
-  P_ = F_ *P_ *Ft+Q_;
+
+  cout << "P_" << endl << x_ << endl << endl;
+ cout << "Q_" << endl << x_ << endl << endl;
+    P_ = F_ *P_ *Ft+Q_;
   
   std::cout << "after Predict" << std::endl;
 
@@ -106,15 +112,13 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   
  
   // In section 7 of lesson 5
-  
-  MatrixXd H_; // measurement matrix;
-
-  MatrixXd I;
-  MatrixXd Q;
-  MatrixXd F;
   MatrixXd P;
-  MatrixXd R;
   VectorXd u;
+
+
+ // define Matrix I to be the Identity matrix
+  long x_size = x_.size();
+  MatrixXd I = MatrixXd::Identity(x_size, x_size);
 
   u = VectorXd(2);
   u << 0, 0;
@@ -128,23 +132,24 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
-  MatrixXd K = P * Ht * Si;
+  MatrixXd K = P_ * Ht * Si;
 
   //new state
   //x = VectorXd(2);
   //x << 0, 0;
 
-  x_ = x_ + (K * y);
-  P_ = (I - K + H_) * P_;
+  x_ = x_ + (K * y_);
+  P_ = (I - K * H_) * P_;
 
   //KF Prediction step
 
   
-
+  /*
   x_ = F * x_ + u;
   MatrixXd Ft = F.transpose();
   P_ = F_ * P_ * Ft +Q_;
+  */
   
-  std::cout << "before updateekf" << std::endl;
+  std::cout << "after updateekf" << std::endl;
 
 }
