@@ -25,15 +25,34 @@ void KalmanFilter::Predict() {
   TODO:
     * predict the state
   */
+  
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
-  P_ = F_ * P_ * Ft + Q_;
+  P_ = F_ *P_ *Ft+Q_;
+  
+
+  // in vidoes x has an extra u
+  /*
+  x = F * x + u;
+  MatrixXd Ft = F.transpose();
+  P = F * P * Ft + Q;
+  */
+
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
   /**
   TODO:
     * update the state by using Kalman Filter equations
+  */
+
+  // In section 7 of lesson 5
+  /*
+  VectorXd y = z - H * x;
+  MatrixXd Ht = H.transpose();
+  MatrixXd S = H * P * Ht + R;
+  Matrix Si = S.inverse();
+  MatrixXd K = P * Ht * Si;
   */
   VectorXd z_pred = H_ * x_;
   VectorXd y = z - z_pred;
@@ -42,7 +61,7 @@ void KalmanFilter::Update(const VectorXd &z) {
   MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
   MatrixXd K = PHt * Si;
-
+  
   // new estimate
   x_ = x_ + (K * y);
   long x_size = x_.size();
