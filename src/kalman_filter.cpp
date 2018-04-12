@@ -1,5 +1,7 @@
 #include "kalman_filter.h"
+#include <iostream>
 
+using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -26,10 +28,12 @@ void KalmanFilter::Predict() {
     * predict the state
   */
   
+  std::cout << "before Predict" << std::endl;
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
   P_ = F_ *P_ *Ft+Q_;
   
+  std::cout << "after Predict" << std::endl;
 
   // in vidoes x has an extra u
   /*
@@ -54,6 +58,10 @@ void KalmanFilter::Update(const VectorXd &z) {
   Matrix Si = S.inverse();
   MatrixXd K = P * Ht * Si;
   */
+
+  std::cout << "before Update" << std::endl;
+
+
   VectorXd z_pred = H_ * x_;
   VectorXd y = z - z_pred;
   MatrixXd Ht = H_.transpose();
@@ -67,6 +75,8 @@ void KalmanFilter::Update(const VectorXd &z) {
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
+
+  std::cout << "after update" << std::endl;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -76,6 +86,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   */
   // Section 14 of lesson 5
 
+  std::cout << "before updateekf" << std::endl;
   
   KalmanFilter ekf_;
 
@@ -91,6 +102,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   VectorXd z_pred = VectorXd(3);
   z_pred << rho, theta, ro_dot;
+
+  
  
   // In section 7 of lesson 5
   
@@ -108,6 +121,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   P = MatrixXd(2, 2);
   P << 1000, 0, 0, 1000;
+
+  
  
   VectorXd y_ = z - z_pred;
   MatrixXd Ht = H_.transpose();
@@ -124,9 +139,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   //KF Prediction step
 
+  
+
   x_ = F * x_ + u;
   MatrixXd Ft = F.transpose();
   P_ = F_ * P_ * Ft +Q_;
-
+  
+  std::cout << "before updateekf" << std::endl;
 
 }
