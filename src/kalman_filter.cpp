@@ -94,9 +94,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   */
   // Section 14 of lesson 5
 
-  std::cout << "before updateekf" << std::endl;
+  std::cout << "before update ekf" << std::endl;
   
-  KalmanFilter ekf_;
+  // KalmanFilter ekf_;
 
   std::cout << "KalmanFilter" << std::endl;
   // error with x 
