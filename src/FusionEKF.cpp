@@ -62,10 +62,7 @@ FusionEKF::FusionEKF() {
     * Set the process and measurement noises
   */
 
- // moved from isInitialzed to here
-   ekf_.x_ = VectorXd(4);
-
-   ekf_.x_ << .5, .5, .5, .5; // this value is important for the RMSE
+   
 
 }
 
@@ -90,6 +87,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     // first measurement
     cout << "EKF: " << endl;
+    ekf_.x_ = VectorXd(4);
+
+   ekf_.x_ << 1, 1, .5, .5; // this value is important for the RMSE
+
+   // tweak last two values above
 
     
 
@@ -110,16 +112,18 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Initialize state.
       */
-      ekf_.x_(0) = measurement_pack.raw_measurements_[0];
-      ekf_.x_(1) = measurement_pack.raw_measurements_[1];
+      ekf_.x_(0) = measurement_pack.raw_measurements_[0]; // x
+      ekf_.x_(1) = measurement_pack.raw_measurements_[1]; // y
 
       // changed from 0. 0 
       ekf_.x_(2) = 1.0;
       ekf_.x_(3) = 10.0;
     }
 
-   // remove since reinitializing
-    // ekf_.F_ = MatrixXd(4, 4);
+   // below is from youtube video  set to 1 diagonal matrix which is a 4x4
+
+    // should I comment out beceause reainitializing?
+     ekf_.F_ = MatrixXd(4, 4);
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update

@@ -41,13 +41,7 @@ void KalmanFilter::Predict() {
   
   std::cout << "after Predict" << std::endl;
 
-  // in vidoes x has an extra u
-  /*
-  x = F * x + u;
-  MatrixXd Ft = F.transpose();
-  P = F * P * Ft + Q;
-  */
-
+  
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
@@ -73,14 +67,22 @@ void KalmanFilter::Update(const VectorXd &z) {
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
+
+  // commenting out do we need this? 
+  /*
   MatrixXd PHt = P_ * Ht;
   MatrixXd K = PHt * Si;
+  
+  */
+  MatrixXd K = P_ * Ht * Si;
+  
   
   // new estimate
   x_ = x_ + (K * y);
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
+
 
   std::cout << "after update" << std::endl;
 }
@@ -96,10 +98,19 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   
   KalmanFilter ekf_;
 
+  std::cout << "KalmanFilter" << std::endl;
+  // error with x 
   float x = ekf_.x_(0);
+
+  std::cout << "after x" << std::endl;
   float y = ekf_.x_(1);
+  std::cout << "after y" << std::endl;
   float vx = ekf_.x_(2);
+  std::cout << "after vx" << std::endl;
   float vy = ekf_.x_(3);
+  std::cout << "after vy" << std::endl;
+
+  std::cout << "before rho" << std::endl;
 
   float rho = sqrt(x*x+y*y);
   float theta = atan2(y,x);
@@ -113,15 +124,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
  
   // In section 7 of lesson 5
   MatrixXd P;
-  VectorXd u;
-
+  
+ std::cout << "before define matrix i" << std::endl;
 
  // define Matrix I to be the Identity matrix
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
 
-  u = VectorXd(2);
-  u << 0, 0;
+ 
 
   P = MatrixXd(2, 2);
   P << 1000, 0, 0, 1000;
@@ -137,6 +147,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   //new state
   //x = VectorXd(2);
   //x << 0, 0;
+
+  std::cout << "before  x_= x_ + (K * y_)" << std::endl;
 
   x_ = x_ + (K * y_);
   P_ = (I - K * H_) * P_;
