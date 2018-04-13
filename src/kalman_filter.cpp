@@ -12,6 +12,7 @@ KalmanFilter::KalmanFilter() {}
 
 KalmanFilter::~KalmanFilter() {}
 
+
 void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
                         MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in) {
   x_ = x_in;
@@ -100,14 +101,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   std::cout << "KalmanFilter" << std::endl;
   // error with x 
-  float x = ekf_.x_(0);
+  float x = x_(0);
 
   std::cout << "after x" << std::endl;
-  float y = ekf_.x_(1);
+  float y = x_(1);
   std::cout << "after y" << std::endl;
-  float vx = ekf_.x_(2);
+  float vx = x_(2);
   std::cout << "after vx" << std::endl;
-  float vy = ekf_.x_(3);
+  float vy = x_(3);
   std::cout << "after vy" << std::endl;
 
   std::cout << "before rho" << std::endl;

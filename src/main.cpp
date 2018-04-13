@@ -33,9 +33,14 @@ int main()
   // Create a Kalman Filter instance
   FusionEKF fusionEKF;
 
+  KalmanFilter ekf_;
+
+
   // used to compute the RMSE later
   Tools tools;
   vector<VectorXd> estimations;
+
+
   vector<VectorXd> ground_truth;
 
   h.onMessage([&fusionEKF,&tools,&estimations,&ground_truth](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
