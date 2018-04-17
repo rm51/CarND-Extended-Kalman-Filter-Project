@@ -122,8 +122,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
    // below is from youtube video  set to 1 diagonal matrix which is a 4x4
 
-    // should I comment out beceause reainitializing?
+    // should I comment out beceause reinitializing?
      ekf_.F_ = MatrixXd(4, 4);
+     ekf_.F_ <<  1, 0, 1, 0,
+             0, 1, 0, 1,
+             0, 0, 1, 0,
+             0, 0, 0, 1;
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update
