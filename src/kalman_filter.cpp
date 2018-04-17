@@ -30,14 +30,14 @@ void KalmanFilter::Predict() {
   */
   
   std::cout << "before Predict" << std::endl;
-  cout << "x_" << endl << x_ << endl << endl;
-  cout << "F_" << endl << x_ << endl << endl;
+  cout << "x_ Kalman Filter Predit" << endl << x_ << endl << endl;
+  cout << "F_ Kalman Filter Predict" << endl << x_ << endl << endl;
 
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
 
-  cout << "P_" << endl << x_ << endl << endl;
- cout << "Q_" << endl << x_ << endl << endl;
+  cout << "P_ Kalman Filter Predict" << endl << x_ << endl << endl;
+ cout << "Q_ Kalman Filter Predict" << endl << x_ << endl << endl;
     P_ = F_ *P_ *Ft+Q_;
   
   std::cout << "after Predict" << std::endl;
@@ -103,7 +103,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   // error with x 
   float x = x_(0);
 
-  std::cout << "after x" << std::endl;
+  std::cout << "after x"  << std::endl;
   float y = x_(1);
   std::cout << "after y" << std::endl;
   float vx = x_(2);
