@@ -140,11 +140,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   // TODO: Normalize angle after y_
   VectorXd y_ = z - z_pred;
+
   while (fabs(y_[1]) > M_PI)
   {
+      std::cout << "y_[1]"  << y_[1] << std::endl;
       y_[1] -= 2*M_PI;
   }
 
+    std::cout << "after > M_PI" << std::endl;
     while (fabs(y_[1]) < -M_PI)
     {
         y_[1] += 2*M_PI;
