@@ -12,7 +12,6 @@ KalmanFilter::KalmanFilter() {}
 
 KalmanFilter::~KalmanFilter() {}
 
-
 void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
                         MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in) {
   x_ = x_in;
@@ -137,9 +136,21 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   P = MatrixXd(2, 2);
   P << 1000, 0, 0, 1000;
 
-  
- 
+  // TODO: Normalize angle after y_
   VectorXd y_ = z - z_pred;
+  while (fabs(y_[1]) > M_PI)
+  {
+      y_[1] -= 2*M_PI;
+  }
+
+    while (fabs(y_[1]) < -M_PI)
+    {
+        y_[1] += 2*M_PI;
+    }
+
+
+
+
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
@@ -156,7 +167,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   //KF Prediction step
 
-  
+
   /*
   x_ = F * x_ + u;
   MatrixXd Ft = F.transpose();
