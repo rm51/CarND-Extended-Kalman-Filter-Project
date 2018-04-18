@@ -131,10 +131,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
 
- 
+    std::cout << "after define matrix i" << std::endl;
 
   P = MatrixXd(2, 2);
   P << 1000, 0, 0, 1000;
+
+    std::cout << "before normalize angle" << std::endl;
 
   // TODO: Normalize angle after y_
   VectorXd y_ = z - z_pred;
@@ -149,9 +151,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     }
 
 
+    std::cout << "after normalize angle" << std::endl;
 
-
-  MatrixXd Ht = H_.transpose();
+    MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
   MatrixXd K = P_ * Ht * Si;
