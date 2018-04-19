@@ -114,9 +114,13 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   float rho = sqrt(x*x+y*y);
   float theta = atan2(y,x);
-  float ro_dot = (x*vy+y*vy)/rho;
+  float ro_dot = 0;
   VectorXd x_pred = VectorXd(3);
 
+
+  if (fabs(rho)>=0.0001){
+      ro_dot = (x*vy+y*vy)/rho;
+  }
   VectorXd z_pred = VectorXd(3);
   z_pred << rho, theta, ro_dot;
 
@@ -142,10 +146,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd y_ = z - z_pred;
     std::cout << "before y_[1]" << endl;
     cout << y_[1] << std::endl;
-  //  y_[1] = atan2(sin(y_[1]),cos(y_[1]));
+    y_[1] = atan2(sin(y_[1]),cos(y_[1]));
 
 
-  while (y_[1] > M_PI)
+  if (y_[1] > M_PI)
   {
       std::cout << "before y_[1] > M_PI" << endl;
       cout << y_[1] << std::endl;
@@ -155,7 +159,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   }
 
    // std::cout << "after > M_PI " << std::endl;
-    while (y_[1] < -M_PI)
+    if (y_[1] < -M_PI)
     {
         std::cout << "before y_[1] < M_PI" << endl;
         cout << y_[1] << std::endl;

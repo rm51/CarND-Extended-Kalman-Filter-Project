@@ -53,8 +53,8 @@ FusionEKF::FusionEKF() {
    
 
   //set the acceleration noise components
-  float noise_ax = 9.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
-  float noise_ay = 9.0; //provided in the quize as 9
+  float noise_ax = 6.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
+  float noise_ay = 6.0; //provided in the quize as 9
 
   /**
   TODO:
