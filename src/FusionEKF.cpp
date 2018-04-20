@@ -53,8 +53,8 @@ FusionEKF::FusionEKF() {
    
 
   //set the acceleration noise components
-  float noise_ax = 6.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
-  float noise_ay = 6.0; //provided in the quize as 9
+  float noise_ax = 9.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
+  float noise_ay = 9.0; //provided in the quize as 9
 
   /**
   TODO:
@@ -105,8 +105,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // put in values for ro and theta
       float ro = measurement_pack.raw_measurements_[0];
       float theta = measurement_pack.raw_measurements_[1];
+
+      // what should ro_dot be?
       ekf_.x_(0) = ro*cos(theta);
       ekf_.x_(1) = ro*sin(theta);
+
+      // need to add
+      // ekf_.x_(2) = ro_dot*cos(theta);
+      // ekf_.x_(3) = ro_dot*sin(theta);
+
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       /**
@@ -114,10 +121,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       */
       ekf_.x_(0) = measurement_pack.raw_measurements_[0]; // x
       ekf_.x_(1) = measurement_pack.raw_measurements_[1]; // y
-
-      // changed from 0. 0 
-      ekf_.x_(2) = 1.0;
-      ekf_.x_(3) = 10.0;
+      ekf_.x_(2) = 0.0;
+      ekf_.x_(3) = 0.0;
     }
 
    // below is from youtube video  set to 1 diagonal matrix which is a 4x4
