@@ -68,8 +68,9 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    float c3 = (c1*c2);
   // check division by zero
   if (fabs(c1) < 0.0001){
-    c1 = .0001;
+     c1 = .0001;
     std::cout << "CalculateJacobian() - Error - Division by zero, Setting c1 to .0001 " << endl;
+
   }
 
   //compute the Jacobian matrix
@@ -77,6 +78,9 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
         -(py/c1), (px/c1), 0, 0,
         py*(vx*py - vy*px)/c3, px*(px*vy - py*vx)/c3, px/c2, py/c2;
 
+
+   std::cout << "Hj";
+   std::cout << Hj << endl;
   return Hj;
 
 }

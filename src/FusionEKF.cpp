@@ -39,11 +39,7 @@ FusionEKF::FusionEKF() {
   ekf_.P_ = MatrixXd(4, 4);// 4x4 matrix
    
   
-  ekf_.F_ << 1, 2, 3, 4,
-             5, 6, 7, 8,
-             9, 10, 11, 12,
-             13, 14, 15, 16;
-  
+
 
   ekf_.P_ << 1, 0, 0, 0,
              0, 1, 0, 0,
@@ -130,7 +126,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    // below is from youtube video  set to 1 diagonal matrix which is a 4x4
 
     // should I comment out beceause reinitializing?
-     ekf_.F_ = MatrixXd(4, 4);
+    // ekf_.F_ = MatrixXd(4, 4);
      ekf_.F_ <<  1, 0, 1, 0,
              0, 1, 0, 1,
              0, 0, 1, 0,
@@ -154,14 +150,20 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
   // delta time
-  float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0; // dt - expressed in seconds
+  dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0; // dt - expressed in seconds
   previous_timestamp_ = measurement_pack.timestamp_;
 
-  float dt_2 = dt * dt;
+    ekf_.F_ << 1, 0, dt, 0,
+            0, 1, 0, dt,
+            0, 0, 1, 0,
+            0, 0, 0, 1;
+
+    float dt_2 = dt * dt;
   float dt_3 = dt_2 * dt;
   float dt_4 = dt_3 * dt;
 
   //Modify the F matrix so that the time is integrated Section 8 of Lesson 5
+  // so that the time is integrated
   ekf_.F_(0, 2) = dt;
   ekf_.F_(1, 3) = dt;
 

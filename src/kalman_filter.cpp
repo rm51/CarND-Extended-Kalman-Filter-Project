@@ -8,7 +8,10 @@ using Eigen::VectorXd;
 // Please note that the Eigen library does not initialize 
 // VectorXd or MatrixXd objects with zeros upon creation.
 
-KalmanFilter::KalmanFilter() {}
+KalmanFilter::KalmanFilter() {
+    u = VectorXd(2);
+    u << 9, 9;
+}
 
 KalmanFilter::~KalmanFilter() {}
 
@@ -132,64 +135,32 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
     std::cout << "after define matrix i" << std::endl;
 
-  P = MatrixXd(2, 2);
-
-  // changed from 1000 to 100
-  P << 100, 0, 0, 100;
-
     std::cout << "before normalize angle" << std::endl;
 
+  VectorXd y_(3);
   // TODO: Normalize angle after y_
-  VectorXd y_ = z - z_pred;
+  y_ = z - z_pred;
     std::cout << "before y_[1]" << endl;
     cout << y_[1] << std::endl;
     y_[1] = atan2(sin(y_[1]),cos(y_[1]));
 
-  /*
-  if (y_[1] > M_PI)
-  {
-      std::cout << "before y_[1] > M_PI" << endl;
-      cout << y_[1] << std::endl;
-      y_[1] -= 2*M_PI;
-      std::cout << "y_[1] > M_PI" << endl;
-      cout << y_[1] << std::endl;
-  }
-
-   // std::cout << "after > M_PI " << std::endl;
-    if (y_[1] < -M_PI)
-    {
-        std::cout << "before y_[1] < M_PI" << endl;
-        cout << y_[1] << std::endl;
-        y_[1] += 2*M_PI;
-        std::cout << "y_[1] < M_PI";
-        cout << y_[1] << std::endl;
-    }
-   */
 
     std::cout << "after normalize angle" << std::endl;
 
+    MatrixXd S(3,3);
+    MatrixXd K(4,3);
     MatrixXd Ht = H_.transpose();
-  MatrixXd S = H_ * P_ * Ht + R_;
+    S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
-  MatrixXd K = P_ * Ht * Si;
+    K = P_ * Ht * Si;
 
-  //new state
-  //x = VectorXd(2);
-  //x << 0, 0;
+
 
   std::cout << "before  x_= x_ + (K * y_)" << std::endl;
 
   x_ = x_ + (K * y_);
   P_ = (I - K * H_) * P_;
-
-  //KF Prediction step
-
-  /*
-  x_ = F * x_ + u;
-  MatrixXd Ft = F.transpose();
-  P_ = F_ * P_ * Ft +Q_;
-  */
   
   std::cout << "after updateekf" << std::endl;
 

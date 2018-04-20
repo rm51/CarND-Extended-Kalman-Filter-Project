@@ -40,6 +40,7 @@ private:
 
   float noise_ax;
   float noise_ay;
+  float dt;
 
   // tool object used to compute Jacobian and RMSE
   Tools tools;

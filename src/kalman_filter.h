@@ -24,6 +24,8 @@ public:
   Eigen::MatrixXd R_;
 
 
+  // Process noise
+  Eigen::VectorXd u;
   /**
    * Constructor
    */
