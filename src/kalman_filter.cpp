@@ -45,19 +45,10 @@ void KalmanFilter::Predict() {
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
-  /**
-  TODO:
-    * update the state by using Kalman Filter equations
-  */
+
 
   // In section 7 of lesson 5
-  /*
-  VectorXd y = z - H * x;
-  MatrixXd Ht = H.transpose();
-  MatrixXd S = H * P * Ht + R;
-  Matrix Si = S.inverse();
-  MatrixXd K = P * Ht * Si;
-  */
+
 
   std::cout << "before Update" << std::endl;
 
@@ -69,11 +60,7 @@ void KalmanFilter::Update(const VectorXd &z) {
   MatrixXd Si = S.inverse();
 
   // commenting out do we need this? 
-  /*
-  MatrixXd PHt = P_ * Ht;
-  MatrixXd K = PHt * Si;
-  
-  */
+
   MatrixXd K = P_ * Ht * Si;
   
   
@@ -86,6 +73,8 @@ void KalmanFilter::Update(const VectorXd &z) {
 
   std::cout << "after update" << std::endl;
 }
+
+
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
   /**
@@ -110,7 +99,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   std::cout << "before rho" << std::endl;
 
   float rho = sqrt(x*x+y*y);
-  float theta = atan2(y,x); // theta is phi
+  float phi = atan2(y,x); // theta is phi
   float ro_dot = 0;
   VectorXd x_pred(3);
 
@@ -119,7 +108,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
       ro_dot = (x*vy+y*vy)/rho;
   }
   VectorXd z_pred(3);
-  z_pred << rho, theta, ro_dot;
+  z_pred << rho, phi, ro_dot;
 
   
  
