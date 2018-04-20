@@ -36,7 +36,7 @@ void KalmanFilter::Predict() {
   MatrixXd Ft = F_.transpose();
 
   cout << "P_ Kalman Filter Predict" << endl << x_ << endl << endl;
- cout << "Q_ Kalman Filter Predict" << endl << x_ << endl << endl;
+  cout << "Q_ Kalman Filter Predict" << endl << x_ << endl << endl;
     P_ = F_ *P_ *Ft+Q_;
   
   std::cout << "after Predict" << std::endl;
@@ -95,10 +95,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   // Section 14 of lesson 5
 
   std::cout << "before update ekf" << std::endl;
-  
-  // KalmanFilter ekf_;
 
-  std::cout << "KalmanFilter" << std::endl;
   // error with x 
   float x = x_(0);
 
@@ -113,15 +110,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   std::cout << "before rho" << std::endl;
 
   float rho = sqrt(x*x+y*y);
-  float theta = atan2(y,x);
+  float theta = atan2(y,x); // theta is phi
   float ro_dot = 0;
-  VectorXd x_pred = VectorXd(3);
+  VectorXd x_pred(3);
 
 
   if (fabs(rho)>=0.0001){
       ro_dot = (x*vy+y*vy)/rho;
   }
-  VectorXd z_pred = VectorXd(3);
+  VectorXd z_pred(3);
   z_pred << rho, theta, ro_dot;
 
   
@@ -148,7 +145,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     cout << y_[1] << std::endl;
     y_[1] = atan2(sin(y_[1]),cos(y_[1]));
 
-
+  /*
   if (y_[1] > M_PI)
   {
       std::cout << "before y_[1] > M_PI" << endl;
@@ -167,13 +164,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
         std::cout << "y_[1] < M_PI";
         cout << y_[1] << std::endl;
     }
-
+   */
 
     std::cout << "after normalize angle" << std::endl;
 
     MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
+  MatrixXd PHt = P_ * Ht;
   MatrixXd K = P_ * Ht * Si;
 
   //new state

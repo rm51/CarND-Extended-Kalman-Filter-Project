@@ -109,7 +109,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // what should ro_dot be?
       ekf_.x_(0) = ro*cos(theta);
       ekf_.x_(1) = ro*sin(theta);
-
+      ekf_.x_(2) = 0;
+      ekf_.x_(3) = 0;
       // need to add
       // ekf_.x_(2) = ro_dot*cos(theta);
       // ekf_.x_(3) = ro_dot*sin(theta);
