@@ -77,19 +77,28 @@ void KalmanFilter::Update(const VectorXd &z) {
 
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  /**
-  TODO:
-    * update the state by using Extended Kalman Filter equations
-  */
-  // Section 14 of lesson 5
+    /**
+    TODO:
+      * update the state by using Extended Kalman Filter equations
+    */
+    // Section 14 of lesson 5
 
-  std::cout << "before update ekf" << std::endl;
+    std::cout << "before update ekf" << std::endl;
 
-  // error with x 
-  float x = x_(0);
+    // error with x
+    float x = x_(0);
 
-  std::cout << "after x"  << std::endl;
-  float y = x_(1);
+    std::cout << "after x" << std::endl;
+    float y = x_(1);
+
+    // added check for if px, py - negative
+    if ((x < 0) && (y < 0))
+    {
+        x = fabs(x);
+        y = fabs(y);
+    }
+    else if  (x < 0)
+      x = fabs(x);
   std::cout << "after y" << std::endl;
   float vx = x_(2);
   std::cout << "after vx" << std::endl;
@@ -124,7 +133,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     std::cout << "after define matrix i" << std::endl;
 
   P = MatrixXd(2, 2);
-  P << 1000, 0, 0, 1000;
+
+  // changed from 1000 to 100
+  P << 100, 0, 0, 100;
 
     std::cout << "before normalize angle" << std::endl;
 
@@ -174,7 +185,6 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   //KF Prediction step
 
-
   /*
   x_ = F * x_ + u;
   MatrixXd Ft = F.transpose();
@@ -182,5 +192,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   */
   
   std::cout << "after updateekf" << std::endl;
+
+
 
 }
