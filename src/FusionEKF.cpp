@@ -82,7 +82,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       ekf_.P_ << 1, 0, 0, 0,
               0, 1, 0, 0,
               0, 0, 1, 0,
-              0, 0, 10, 1;
+              0, 0, 0, 1;
 
    // tweak last two values above
 
@@ -114,8 +114,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
       ekf_.x_(0) = measurement_pack.raw_measurements_[0]; // x
       ekf_.x_(1) = measurement_pack.raw_measurements_[1]; // y
-      ekf_.x_(2) = 0.0;
-      ekf_.x_(3) = 0.0;
+      ekf_.x_(2) = 0;
+      ekf_.x_(3) = 0;
     }
 
 
@@ -150,7 +150,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   // delta time
   dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0; // dt - expressed in seconds
   previous_timestamp_ = measurement_pack.timestamp_;
-
+    ekf_.F_ = MatrixXd(4, 4);
     ekf_.F_ << 1, 0, dt, 0,
             0, 1, 0, dt,
             0, 0, 1, 0,
@@ -162,8 +162,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   //Modify the F matrix so that the time is integrated Section 8 of Lesson 5
   // so that the time is integrated
-  ekf_.F_(0, 2) = dt;
-  ekf_.F_(1, 3) = dt;
+    // commenting out
+ // ekf_.F_(0, 2) = dt;
+  //ekf_.F_(1, 3) = dt;
 
   //set the process covariance matrix Q Section 9 of Lesson 5
   ekf_.Q_ = MatrixXd(4, 4);
@@ -177,7 +178,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   /*****************************************************************************
    *  Update
    ****************************************************************************/
-    
+
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
 
