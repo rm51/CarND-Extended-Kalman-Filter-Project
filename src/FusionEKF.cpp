@@ -16,6 +16,7 @@ FusionEKF::FusionEKF() {
 
   previous_timestamp_ = 0;
 
+  dt = 0;
   // initializing matrices
   R_laser_ = MatrixXd(2, 2);
   R_radar_ = MatrixXd(3, 3);
@@ -34,31 +35,17 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1, 0, 0, 0, //From section 10 in Lesson 5
                0, 1, 0, 0;
 
+  /*
   ekf_.F_ = MatrixXd(4, 4);//  4x4 matrix (state transition)
 
-  ekf_.P_ = MatrixXd(4, 4);// 4x4 matrix
-   
-  
 
 
-  ekf_.P_ << 1, 0, 0, 0,
-             0, 1, 0, 0,
-             0, 0, 1000, 0,
-             0, 0, 10, 1000;
-
-   
+   */
 
   //set the acceleration noise components
   float noise_ax = 9.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
   float noise_ay = 9.0; //provided in the quize as 9
 
-  /**
-  TODO:
-    * Finish initializing the FusionEKF.
-    * Set the process and measurement noises
-  */
-
-   
 
 }
 
@@ -85,7 +72,17 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
 
-   ekf_.x_ << 1, 1, .5, .5; // this value is important for the RMSE
+   ekf_.x_ << 1, 1, 0, 0; // this value is important for the RMSE
+
+      ekf_.P_ = MatrixXd(4, 4);// 4x4 matrix
+
+
+
+
+      ekf_.P_ << 1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, 10, 1;
 
    // tweak last two values above
 
@@ -98,18 +95,17 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // Convert radar from polar to cartesian coordinates and initialize state.
 
 
-      // put in values for ro and theta
       float ro = measurement_pack.raw_measurements_[0];
       float theta = measurement_pack.raw_measurements_[1];
-
-      // what should ro_dot be?
+     /*
       ekf_.x_(0) = ro*cos(theta);
       ekf_.x_(1) = ro*sin(theta);
       ekf_.x_(2) = 0;
       ekf_.x_(3) = 0;
-      // need to add
-      // ekf_.x_(2) = ro_dot*cos(theta);
-      // ekf_.x_(3) = ro_dot*sin(theta);
+
+       */
+      ekf_.x_ << ro*cos(theta),  ro*sin(theta),0, 0;
+
 
     }
     else  if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
@@ -127,10 +123,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     // should I comment out beceause reinitializing?
     // ekf_.F_ = MatrixXd(4, 4);
+      /*
      ekf_.F_ <<  1, 0, 1, 0,
              0, 1, 0, 1,
              0, 0, 1, 0,
              0, 0, 0, 1;
+             */
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update
@@ -179,13 +177,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   /*****************************************************************************
    *  Update
    ****************************************************************************/
-
-  /**
-   TODO:
-     * Use the sensor type to perform the update step.
-     * Update the state and covariance matrices.
-   */
-
+    
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
 

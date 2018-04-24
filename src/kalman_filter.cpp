@@ -80,15 +80,9 @@ void KalmanFilter::Update(const VectorXd &z) {
 
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-    /**
-    TODO:
-      * update the state by using Extended Kalman Filter equations
-    */
-    // Section 14 of lesson 5
 
     std::cout << "before update ekf" << std::endl;
 
-    // error with x
     float x = x_(0);
 
     std::cout << "after x" << std::endl;
@@ -122,10 +116,6 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd z_pred(3);
   z_pred << rho, phi, ro_dot;
 
-  
- 
-  // In section 7 of lesson 5
-  MatrixXd P;
   
  std::cout << "before define matrix i" << std::endl;
 
