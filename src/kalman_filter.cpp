@@ -73,6 +73,9 @@ void KalmanFilter::Update(const VectorXd &z) {
   // new estimate
   x_ = x_ + (K * y);
   long x_size = x_.size();
+   cout << "x_size" << endl;
+   cout << x_size << endl;
+
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 
@@ -90,15 +93,19 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
     std::cout << "after x" << std::endl;
     float y = x_(1);
-
+  /*
     // added check for if px, py - negative
     if ((x < 0) && (y < 0))
     {
         x = fabs(x);
         y = fabs(y);
     }
-    else if  (x < 0)
+
+    else
+   if  (x < 0)
       x = fabs(x);
+
+      */
   std::cout << "after y" << std::endl;
   float vx = x_(2);
   std::cout << "after vx" << std::endl;
