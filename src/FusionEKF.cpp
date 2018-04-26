@@ -72,7 +72,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
 
-   ekf_.x_ << 1, 1, 0, 0; // this value is important for the RMSE
+   ekf_.x_ << 1, 1, 1, 1; // this value is important for the RMSE
 
       ekf_.P_ = MatrixXd(4, 4);// 4x4 matrix
 
@@ -81,8 +81,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
       ekf_.P_ << 1, 0, 0, 0,
               0, 1, 0, 0,
-              0, 0, 1, 0,
-              0, 0, 0, 1;
+              0, 0, 1000, 0,
+              0, 0, 0, 1000;
 
    // tweak last two values above
 
@@ -95,16 +95,11 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // Convert radar from polar to cartesian coordinates and initialize state.
 
 
-      float ro = measurement_pack.raw_measurements_[0];
-      float theta = measurement_pack.raw_measurements_[1];
-     /*
-      ekf_.x_(0) = ro*cos(theta);
-      ekf_.x_(1) = ro*sin(theta);
-      ekf_.x_(2) = 0;
-      ekf_.x_(3) = 0;
+      float ro = measurement_pack.raw_measurements_(0);
+      float phi = measurement_pack.raw_measurements_(1);
+      float ro_dot = measurement_pack.raw_measurements_(2);
 
-       */
-      ekf_.x_ << ro*cos(theta),  ro*sin(theta),0, 0;
+      ekf_.x_ << ro*cos(phi),  ro*sin(phi),ro_dot*cos(phi), ro_dot*sin(phi);
 
 
     }
@@ -112,10 +107,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
       // Initialize state.
 
-      ekf_.x_(0) = measurement_pack.raw_measurements_[0]; // x
-      ekf_.x_(1) = measurement_pack.raw_measurements_[1]; // y
-      ekf_.x_(2) = 0;
-      ekf_.x_(3) = 0;
+        ekf_.x_ << measurement_pack.raw_measurements_(0), measurement_pack.raw_measurements_(1), 0.0, 0.0;
     }
 
 
@@ -123,12 +115,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     // should I comment out beceause reinitializing?
     // ekf_.F_ = MatrixXd(4, 4);
-      /*
-     ekf_.F_ <<  1, 0, 1, 0,
-             0, 1, 0, 1,
-             0, 0, 1, 0,
-             0, 0, 0, 1;
-             */
+
+    
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update

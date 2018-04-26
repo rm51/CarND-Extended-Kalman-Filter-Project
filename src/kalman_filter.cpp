@@ -9,8 +9,8 @@ using Eigen::VectorXd;
 // VectorXd or MatrixXd objects with zeros upon creation.
 
 KalmanFilter::KalmanFilter() {
-    u = VectorXd(2);
-    u << 9, 9;
+    //u = VectorXd(2);
+    //u << 9, 9;
 }
 
 KalmanFilter::~KalmanFilter() {}
@@ -91,6 +91,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
     float x = x_(0);
 
+    MatrixXd Hj = tools.CalculateJacobian(x_);
+
     std::cout << "after x" << std::endl;
     float y = x_(1);
   /*
@@ -149,8 +151,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
     MatrixXd S(3,3);
     MatrixXd K(4,3);
-    MatrixXd Ht = H_.transpose();
-    S = H_ * P_ * Ht + R_;
+    MatrixXd Ht = Hj.transpose();
+    S = Hj * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
     K = P_ * Ht * Si;
@@ -160,7 +162,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   std::cout << "before  x_= x_ + (K * y_)" << std::endl;
 
   x_ = x_ + (K * y_);
-  P_ = (I - K * H_) * P_;
+  P_ = (I - K * Hj) * P_;
   
   std::cout << "after updateekf" << std::endl;
 
