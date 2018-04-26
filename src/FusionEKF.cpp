@@ -42,9 +42,6 @@ FusionEKF::FusionEKF() {
 
    */
 
-  //set the acceleration noise components
-  float noise_ax = 9.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
-  float noise_ay = 9.0; //provided in the quize as 9
 
 
 }
@@ -116,7 +113,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // should I comment out beceause reinitializing?
     // ekf_.F_ = MatrixXd(4, 4);
 
-    
+
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update
@@ -151,10 +148,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   //Modify the F matrix so that the time is integrated Section 8 of Lesson 5
   // so that the time is integrated
     // commenting out
- // ekf_.F_(0, 2) = dt;
-  //ekf_.F_(1, 3) = dt;
+  ekf_.F_(0, 2) = dt;
+  ekf_.F_(1, 3) = dt;
 
-  //set the process covariance matrix Q Section 9 of Lesson 5
+    //set the acceleration noise components
+    float noise_ax = 9.0; //provided in the quiz as 9 in section 13 of lesson 5 - 3 squared
+    float noise_ay = 9.0; //provided in the quize as 9
+
+
+    //set the process covariance matrix Q Section 9 of Lesson 5
   ekf_.Q_ = MatrixXd(4, 4);
   ekf_.Q_ << dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
              0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
