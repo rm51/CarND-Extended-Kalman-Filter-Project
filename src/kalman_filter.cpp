@@ -1,5 +1,6 @@
 #include "kalman_filter.h"
 #include <iostream>
+#include "tools.h"
 
 using namespace std;
 using Eigen::MatrixXd;
@@ -9,8 +10,6 @@ using Eigen::VectorXd;
 // VectorXd or MatrixXd objects with zeros upon creation.
 
 KalmanFilter::KalmanFilter() {
-    //u = VectorXd(2);
-    //u << 9, 9;
 }
 
 KalmanFilter::~KalmanFilter() {}
@@ -26,10 +25,6 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 }
 
 void KalmanFilter::Predict() {
-  /**
-  TODO:
-    * predict the state
-  */
   
   std::cout << "before Predict" << std::endl;
   cout << "x_ Kalman Filter Predit" << endl << x_ << endl << endl;
@@ -55,21 +50,13 @@ void KalmanFilter::Update(const VectorXd &z) {
 
   std::cout << "before Update" << std::endl;
 
-  VectorXd y(2);
-  MatrixXd S(2,2);
-  MatrixXd K(4,2);
-
   VectorXd z_pred = H_ * x_;
-  y = z - z_pred;
+  VectorXd y = z - z_pred;
   MatrixXd Ht = H_.transpose();
-  S = H_ * P_ * Ht + R_;
+  MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
+    MatrixXd K = P_ * Ht * Si;
 
-  // commenting out do we need this? 
-
-  K = P_ * Ht * Si;
-  
-  
   // new estimate
   x_ = x_ + (K * y);
   long x_size = x_.size();
@@ -90,24 +77,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     std::cout << "before update ekf" << std::endl;
 
     float x = x_(0);
-
+    Tools tools;
     MatrixXd Hj = tools.CalculateJacobian(x_);
 
     std::cout << "after x" << std::endl;
     float y = x_(1);
-  /*
-    // added check for if px, py - negative
-    if ((x < 0) && (y < 0))
-    {
-        x = fabs(x);
-        y = fabs(y);
-    }
 
-    else
-   if  (x < 0)
-      x = fabs(x);
-
-      */
   std::cout << "after y" << std::endl;
   float vx = x_(2);
   std::cout << "after vx" << std::endl;
@@ -116,13 +91,17 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   std::cout << "before rho" << std::endl;
 
+
+  // Check this part  -ro_dot
+
+
   float rho = sqrt(x*x+y*y);
   float phi = atan2(y,x); // theta is phi
   float ro_dot = 0;
   VectorXd x_pred(3);
 
 
-  if (fabs(rho)>=0.0001){
+  if (rho>=0.0001){
       ro_dot = (x*vy+y*vy)/rho;
   }
   VectorXd z_pred(3);
@@ -149,13 +128,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
     std::cout << "after normalize angle" << std::endl;
 
-    MatrixXd S(3,3);
-    MatrixXd K(4,3);
     MatrixXd Ht = Hj.transpose();
-    S = Hj * P_ * Ht + R_;
-  MatrixXd Si = S.inverse();
-  MatrixXd PHt = P_ * Ht;
-    K = P_ * Ht * Si;
+    MatrixXd S = Hj * P_ * Ht + R_;
+    MatrixXd Si = S.inverse();
+    MatrixXd PHt = P_ * Ht;
+    MatrixXd K = P_ * Ht * Si;
 
 
 
