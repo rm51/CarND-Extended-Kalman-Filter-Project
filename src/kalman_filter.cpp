@@ -92,18 +92,19 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   std::cout << "before rho" << std::endl;
 
 
-  // Check this part  -ro_dot
+  // Check this part  -ro_dot, rewatch video
 
 
   float rho = sqrt(x*x+y*y);
   float phi = atan2(y,x); // theta is phi
-  float ro_dot = 0;
+  float ro_dot =  (x*vx + y*vy) / rho;
   VectorXd x_pred(3);
 
-
+  /*
   if (rho>=0.0001){
       ro_dot = (x*vy+y*vy)/rho;
   }
+   */
   VectorXd z_pred(3);
   z_pred << rho, phi, ro_dot;
 
@@ -125,7 +126,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     cout << y_[1] << std::endl;
     y_[1] = atan2(sin(y_[1]),cos(y_[1]));
 
-
+    // Lesson 5 Part 20
     std::cout << "after normalize angle" << std::endl;
 
     MatrixXd Ht = Hj.transpose();
