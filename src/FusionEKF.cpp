@@ -36,14 +36,6 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1, 0, 0, 0, //From section 10 in Lesson 5
                0, 1, 0, 0;
 
-  /*
-  ekf_.F_ = MatrixXd(4, 4);//  4x4 matrix (state transition)
-
-
-
-   */
-
-
 
 }
 
@@ -59,34 +51,20 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    *  Initialization
    ****************************************************************************/
   if (!is_initialized_) {
-    /**
-    TODO:
-      * Initialize the state ekf_.x_ with the first measurement.
-      * Create the covariance matrix.
-      * Remember: you'll need to convert radar from polar to cartesian coordinates.
-    */
 
     // first measurement
-    cout << "EKF: " << endl;
+
     ekf_.x_ = VectorXd(4);
 
    ekf_.x_ << 1, 1, 1, 1; // this value is important for the RMSE
 
       ekf_.P_ = MatrixXd(4, 4);// 4x4 matrix
 
-
-
-
-      ekf_.P_ << 1, 0, 0, 0,
+    ekf_.P_ << 1, 0, 0, 0,
               0, 1, 0, 0,
               0, 0, 1000, 0,
               0, 0, 0, 1000;
 
-   // tweak last two values above
-
-    
-
-    
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 
@@ -108,13 +86,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
         ekf_.x_ << measurement_pack.raw_measurements_(0), measurement_pack.raw_measurements_(1), 0.0, 0.0;
     }
 
-
-   // below is from youtube video  set to 1 diagonal matrix which is a 4x4
-
-    // should I comment out beceause reinitializing?
-    // ekf_.F_ = MatrixXd(4, 4);
-
-
     previous_timestamp_ = measurement_pack.timestamp_;
 
     // done initializing, no need to predict or update
@@ -126,13 +97,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    *  Prediction
    ****************************************************************************/
 
-  /**
-   TODO:
-     * Update the state transition matrix F according to the new elapsed time.
-      - Time is measured in seconds.
-     * Update the process noise covariance matrix.
-     * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
-   */
+
   // delta time
   dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0; // dt - expressed in seconds
   previous_timestamp_ = measurement_pack.timestamp_;
@@ -148,7 +113,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   //Modify the F matrix so that the time is integrated Section 8 of Lesson 5
   // so that the time is integrated
-    // commenting out
   ekf_.F_(0, 2) = dt;
   ekf_.F_(1, 3) = dt;
 
@@ -185,7 +149,4 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.Update(measurement_pack.raw_measurements_);
   }
 
-  // print the output
-  cout << "Fusion EKF x_ = " << ekf_.x_ << endl;
-  cout << "Fusion EKF P_ = " << ekf_.P_ << endl;
 }
